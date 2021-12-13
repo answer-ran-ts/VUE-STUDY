@@ -1,6 +1,7 @@
 <template>
-  <div class="test">
-    <button @click="loginAdmin">登陆</button>
+  <div class="login">
+    <el-button type="primary" size="mini">登录</el-button>
+    <div class="login-test">测试</div>
   </div>
 </template>
 
@@ -35,5 +36,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+.login-test {
+  color: $panGreen;
+  font-weight: 700;
+}
 </style>

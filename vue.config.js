@@ -3,6 +3,14 @@ module.exports = {
   lintOnSave: true,
   publicPath: './',
   // outputDir: "dist",
+  css: {
+    loaderOptions: {
+      sass: {
+        prependData: '@import "~@/styles/index.scss";'
+      }
+    }
+  },
+
   devServer: {
     port: 8093,
     proxy: {

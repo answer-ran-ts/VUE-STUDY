@@ -7,7 +7,7 @@
     "serve": "vue-cli-service serve --mode dev",
     "mock": "vue-cli-service serve --mode mock",
     "prod": "vue-cli-service serve --mode prod",
-    "build": "vue-cli-service build --mode prod",
+    "build:prod": "vue-cli-service build --mode prod",
     "build:dev": "vue-cli-service build --mode dev",
     "lint": "vue-cli-service lint"
   },
@@ -35,6 +35,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^6.2.2",
+    "filemanager-webpack-plugin": "^6.1.7",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
     "vue-template-compiler": "^2.6.11"

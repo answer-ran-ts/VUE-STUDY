@@ -1,7 +1,5 @@
 <template>
-  <div class="test">
-    <div>测试</div>
-  </div>
+  <div class="test">404</div>
 </template>
 
 <script>
@@ -19,5 +17,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+.test {
+}
 </style>

@@ -16,6 +16,7 @@ module.exports = {
   },
   devServer: {
     port: 8093,
+    open: true,
     proxy: {
       '/yx': {
         target: 'http://aladdin.zj.chinamobile.com/',
@@ -27,7 +28,7 @@ module.exports = {
       }
     }
   },
-  chainWebpack: config => {
+  chainWebpack: (config) => {
     // set svg-sprite-loader
     config.module.rule('svg').exclude.add(resolve('src/icons')).end()
     config.module

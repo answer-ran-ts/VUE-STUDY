@@ -8,7 +8,7 @@ Mock.setup({
   timeout: '200-600'
 })
 
-Mock.mock(getRegExpUrl('/vue-admin-template/user/login'), 'post', req => {
+Mock.mock(getRegExpUrl('/vue-admin-template/user/login'), 'post', (req) => {
   return {
     msg: '操作成功',
     status: 0,
@@ -19,7 +19,7 @@ Mock.mock(getRegExpUrl('/vue-admin-template/user/login'), 'post', req => {
     }
   }
 })
-Mock.mock(getRegExpUrl('/vue-admin-template/user/info'), 'get', req => {
+Mock.mock(getRegExpUrl('/vue-admin-template/user/info'), 'get', (req) => {
   return {
     msg: '操作成功',
     status: 0,
@@ -27,5 +27,12 @@ Mock.mock(getRegExpUrl('/vue-admin-template/user/info'), 'get', req => {
       name: 'admin',
       avatar: 'admin'
     }
+  }
+})
+Mock.mock(getRegExpUrl('/vue-admin-template/user/logout'), 'post', (req) => {
+  return {
+    msg: '操作成功',
+    status: 0,
+    data: 'success'
   }
 })

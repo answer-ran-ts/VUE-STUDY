@@ -22,12 +22,14 @@ export const constantRoutes = [
     // 渲染二级路由，也就是说登录页首先进入 '/' Layout作为一级路由被渲染，此时加载layout组件
     // layout组件根据<router-view />标签判断是否展示二级路由
     // layout的原理就是点击改变侧边栏时，根据当前的path，将key动态的绑定在router-view上，从而动态的加载右侧二级路由，即children组件
-    children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
-    }]
+    children: [
+      {
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: () => import('@/views/dashboard/index'),
+        meta: { title: 'Dashboard', icon: 'dashboard' }
+      }
+    ]
   },
   {
     path: '/form',
@@ -37,7 +39,19 @@ export const constantRoutes = [
         path: 'index',
         name: 'Form',
         component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        meta: { title: '表单实例', icon: 'form' }
+      }
+    ]
+  },
+  {
+    path: '/map',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'map',
+        component: () => import('@/views/dataView/index'),
+        meta: { title: '数据可视化', icon: 'earth' }
       }
     ]
   },

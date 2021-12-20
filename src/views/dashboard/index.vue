@@ -1,5 +1,6 @@
 <template>
   <div class="dashboard-container">
+    <h1>vuex存储数据</h1>
     <div class="dashboard-text">
       <div>token:{{token}}</div>
       <div>name: {{ name }}</div>
@@ -21,9 +22,9 @@ export default {
 
 <style lang="scss" scoped>
 .dashboard {
-  // &-container {
-  //   margin: 30px;
-  // }
+  &-container {
+    margin: 30px;
+  }
   &-text {
     font-size: 30px;
     line-height: 46px;

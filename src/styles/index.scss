@@ -33,6 +33,11 @@ html {
   box-sizing: inherit;
 }
 
+.BMapLabel{padding:0 !important;border:none !important;background: none !important;}
+.BMap_cpyCtrl,.anchorBL{
+  display: none !important;
+}
+
 .no-padding {
   padding: 0px !important;
 }

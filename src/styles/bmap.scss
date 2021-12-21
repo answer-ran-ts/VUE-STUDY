@@ -1,0 +1,31 @@
+.BMapLabel {
+  padding: 0 !important;
+  border: none !important;
+  background: none !important;
+}
+.BMap_cpyCtrl,
+.anchorBL {
+  display: none !important;
+}
+
+.detail_icon {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background: rgba($tiffany, 0.9);
+}
+.infoWindow {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  margin-left: -100px;
+  width: 200px;
+  height: auto;
+  background: rgba($tiffany, 0.9);
+  .infoWindow_item {
+    white-space: pre-line;
+    word-break: break-all;
+    margin: 5px 10px;
+  }
+}

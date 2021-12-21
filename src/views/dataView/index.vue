@@ -5,18 +5,22 @@
 </template>
 <script type="text/javascript" src="//apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
 <script>
+import styleJson from '../../utils/map_config.json'
 export default {
   name: '',
   props: {},
   components: {},
   data() {
     return {
-      bmap: null,
+      bmap: null /* 地图 */,
+      reqData: [] /* 请求数据 */,
+      standardPoint: [] /* 标准点位 */,
+      infoWindow: null /* 窗口信息 */,
+      infoWindowClick: null,
     }
   },
   mounted() {
     this.mapInit()
-    this.render()
   },
   methods: {
     mapInit() {
@@ -24,14 +28,125 @@ export default {
       this.bmap = new BMap.Map('allMap', {
         enableMapClick: false,
       }) // 创建Map实例
-      this.bmap.centerAndZoom(new BMap.Point(105.403119, 38.028658), 5) // 初始化地图,设置中心点坐标和地图级别
+      this.bmap.centerAndZoom(new BMap.Point(120.004909, 30.283515), 10) // 初始化地图,设置中心点坐标和地图级别
       this.bmap.enableScrollWheelZoom(true) // 开启鼠标滚轮缩放
-      this.bmap.setMapStyle({
-        style: 'midnight',
+      this.bmap.setMapStyleV2({
+        styleJson: styleJson,
+      })
+      this.getData()
+      this.buildStandardPoint()
+      this.renderPolyline()
+      this.renderPolygon()
+      let zoom = this.bmap.getViewport(this.standardPoint).zoom
+      this.bmap.centerAndZoom(
+        this.standardPoint[this.standardPoint.length - 3],
+        zoom
+      )
+      this.renderLabel()
+    },
+    getData() {
+      this.reqData = [
+        {
+          billNo: '135********',
+          inTime: '2021-04-27 00:00:00',
+          lacCi: '22297_53745858',
+          longitude: '120.23978870791153',
+          latitude: '30.313105488897413',
+          cityName: '杭州市',
+          provName: '浙江省',
+          countyName: '江干区',
+          townName: '笕桥街道',
+          lacCiName: '杭州普福村LY原筑一号3DMIMO_194',
+        },
+        {
+          billNo: '135********',
+          inTime: '2021-04-27 08:50:05',
+          lacCi: '22297_189975298',
+          longitude: '120.2406478238839',
+          latitude: '30.314464872281892',
+          cityName: '杭州市',
+          countyName: '江干区',
+          townName: '笕桥街道',
+          lacCiName: '杭州原筑壹号地下室及电梯SFFDD1800_2',
+        },
+        {
+          billNo: '135********',
+          inTime: '2021-04-27 08:53:31',
+          lacCi: '22297_48750529',
+          longitude: '120.23931419045435',
+          latitude: '30.314382564359313',
+          provName: '浙江省',
+          cityName: '杭州市',
+          countyName: '江干区',
+          townName: '笕桥街道',
+          lacCiName: '杭州普福村CRAN原筑壹号北3DMIMO_193',
+        },
+        {
+          billNo: '135********',
+          inTime: '2021-04-27 08:54:00',
+          lacCi: '22297_53745858',
+          longitude: '120.23978870791153',
+          latitude: '30.313105488897413',
+          cityName: '杭州市',
+          countyName: '江干区',
+          townName: '笕桥街道',
+          lacCiName: '杭州普福村LY原筑一号3DMIMO_194',
+        },
+        {
+          billNo: '135********',
+          inTime: '2021-04-27 08:54:39',
+          lacCi: '22297_211661636',
+          longitude: '120.23301225771037',
+          latitude: '30.31163872297817',
+          cityName: '杭州市',
+          countyName: '江干区',
+          townName: '笕桥街道',
+          lacCiName: '杭州黎明三组3DMIMO_68_2CA65',
+        },
+        {
+          billNo: '135********',
+          inTime: '2021-04-27 08:55:45',
+          lacCi: '22297_53735105',
+          longitude: '120.23119859891258',
+          latitude: '30.312889032153407',
+          cityName: '杭州市',
+          countyName: '江干区',
+          townName: '笕桥街道',
+          lacCiName: '杭州黎明村接入CRAN明石商业大厦3DMIMO_193',
+        },
+        {
+          billNo: '135********',
+          inTime: '2021-04-27 08:57:21',
+          lacCi: '22297_54113221',
+          longitude: '120.2222476357207',
+          latitude: '30.312494332650576',
+          cityName: '杭州市',
+          countyName: '江干区',
+          townName: '笕桥街道',
+          lacCiName: '杭州黎明村接入CRAN草庄社区3DMIMO_197',
+        },
+        {
+          billNo: '135********',
+          inTime: '2021-04-27 08:58:06',
+          lacCi: '22297_210616644',
+          longitude: '120.21992793145938',
+          latitude: '30.311275901014817',
+          cityName: '杭州市',
+          countyName: '江干区',
+          townName: '笕桥街道',
+          lacCiName: '杭州彭埠东接入机房LY钱塘天誉北3DMIMO_68_2CA65',
+        },
+      ]
+    },
+    // 构造标准点位
+    buildStandardPoint() {
+      this.standardPoint = this.reqData.map((v) => {
+        return new BMap.Point(v.longitude, v.latitude)
       })
     },
-    render() {
-      var randomCount = 100000
+    // 渲染聚合物
+    renderPolymer() {
+      var randomCount = 500
       var data = []
       var citys = [
         '北京',
@@ -138,6 +253,70 @@ export default {
         },
       }
       new mapv.baiduMapLayer(this.bmap, dataSet, options)
+    },
+    // 渲染标注
+    renderLabel() {
+      this.reqData.forEach((v, index) => {
+        let icon = 'detail_icon'
+        let content = `
+        <div class='${icon}'}></div>
+      `
+        let tranckLabel = new BMap.Label(content, {
+          position: new BMap.Point(v.longitude, v.latitude),
+          offset: new BMap.Size(-10, -10),
+        })
+        this.bmap.addOverlay(tranckLabel)
+        tranckLabel.addEventListener('click', () => {
+          this.renderInfoWindow(v, index)
+        })
+      })
+    },
+    // 渲染线
+    renderPolyline() {
+      const tranckLine = new BMap.Polyline(this.standardPoint, {
+        strokeColor: '#fb368e',
+        strokeWeight: 2,
+        strokeStyle: 'solid',
+      })
+      this.bmap.addOverlay(tranckLine)
+    },
+    // 渲染覆盖物
+    renderPolygon() {
+      const tranckPolygon = new BMap.Polygon(this.standardPoint, {
+        strokeColor: 'red',
+        strokeWeight: 2,
+        fillColor: '#fb368e',
+      })
+      this.bmap.addOverlay(tranckPolygon)
+      tranckPolygon.addEventListener('click', function (e) {
+        alert(e.point.lng + ',' + e.point.lat)
+      })
+    },
+    // 渲染弹窗
+    renderInfoWindow(item, index) {
+      let infoWindowClass = 'infoWindow'
+      let content = `
+        <div class=${infoWindowClass}>
+          <div class=infoWindow_item>${item.countyName}</div>
+          <div class=infoWindow_item>${item.lacCiName}</div>
+          <div class=infoWindow_item>${item.townName}</div>
+        </div>
+      `
+      // 每次点击的时候记录当前的index,如果是同一个点位,执行正常的切换,如果不是同一个点位,则移除信息框,打开新的点位弹窗
+      if (this.infoWindowClick !== index) {
+        this.bmap.removeOverlay(this.infoWindow)
+        this.infoWindow = null
+      }
+      if (!this.infoWindow) {
+        this.infoWindow = new BMap.Label(content, {
+          position: new BMap.Point(item.longitude, item.latitude),
+        })
+        this.infoWindowClick = index
+        this.bmap.addOverlay(this.infoWindow)
+      } else {
+        this.bmap.removeOverlay(this.infoWindow)
+        this.infoWindow = null
+      }
     },
   },
 }

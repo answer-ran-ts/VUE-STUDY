@@ -1,6 +1,6 @@
 <template>
-  <div class="test">
-    <button>登陆</button>
+  <div class="login">
+    <div class="login-test">测试</div>
     <svg-icon icon-class="dashboard" />
   </div>
 </template>
@@ -8,7 +8,7 @@
 <script>
 import storage from '@/utils/storage'
 export default {
-  name: '',
+  name: 'Login',
   props: {},
   components: {},
   data () {
@@ -36,4 +36,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.login{
+  margin: 0;
+  padding: 0;
+  &-test{
+    color: red;
+    font-size: 16px;
+  }
+}
 </style>

@@ -1,27 +1,47 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router'
+import Router from 'vue-router'
 
-Vue.use(VueRouter)
+Vue.use(Router)
 
-const routes = [
+export const constantRoutes = [
   {
     path: '/',
-    component: () => import('../views/Login/index')
+    redirect: '/login',
+    component: () => import('../views/Login'),
+    hidden: true
   },
   {
     path: '/login',
-    component: () => import('../views/Login/index')
+    component: () => import('../views/Login'),
+    hidden: true
   },
   {
     path: '/home',
-    component: () => import('../views/TestDemo/index')
-  }
+    component: () => import('../views/Home'),
+    hidden: true
+  },
+  {
+    path: '/404',
+    component: () => import('../views/404.vue'),
+    meta: { title: '404界面' },
+    hidden: true
+  },
+
+  { path: '*', redirect: '/404', hidden: true }
 ]
 
-const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes
-})
+const createRouter = () =>
+  new Router({
+    mode: 'history',
+    // scrollBehavior: () => ({ y: 0 }) /* 记录位置 */,
+    routes: constantRoutes
+  })
+
+const router = createRouter()
+
+export function resetRouter () {
+  const newRouter = createRouter()
+  router.matcher = newRouter.matcher // reset router
+}
 
 export default router

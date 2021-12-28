@@ -5,6 +5,9 @@ import store from './store'
 import * as tools from './utils/index'
 import * as filters from './utils/filter'
 import api from './api/request'
+import '@/icons'
+import '@/permission'
+
 // 全局过滤器
 Object.keys(filters).forEach((key) => {
   Vue.filter(key, filters[key]) // 插入过滤器名和对应方法

@@ -1,11 +1,12 @@
 <template>
   <div class="test">
-    <button @click="loginAdmin">登陆</button>
+    <button>登陆</button>
+    <svg-icon icon-class="dashboard" />
   </div>
 </template>
 
 <script>
-import Storage from '@/utils/storage'
+import storage from '@/utils/storage'
 export default {
   name: '',
   props: {},
@@ -23,7 +24,7 @@ export default {
           password: 'OOoo0000'
         })
         .then((res) => {
-          Storage.set('case-comunity')
+          storage.set('case-comunity')
           console.log(res)
         })
         .catch((err) => {
@@ -35,5 +36,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 </style>

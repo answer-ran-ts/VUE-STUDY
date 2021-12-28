@@ -1,15 +1,28 @@
 <template>
   <div class="dataView_container">
+    <div class="dataView_tools">
+      <el-button type="primary" size="small" @click="search">查询</el-button>
+      <el-button type="primary" size="small" @click="test">测试</el-button>
+    </div>
+    <div class="dataView_echart_pie">
+      <EchartPie :series-data="dataList" :extra-option="extraOption" />
+    </div>
+    <div class="dataView_echart_pie dataView_echart_pie2">
+      <EchartPie :series-data="dataList2" :extra-option="extraOption" />
+    </div>
     <div id="allMap" class="dataView_map"></div>
   </div>
 </template>
 <script type="text/javascript" src="//apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
 <script>
 import styleJson from '../../utils/map_config.json'
+import EchartPie from '@/components/EchartsPie/index.vue'
 export default {
   name: '',
   props: {},
-  components: {},
+  components: {
+    EchartPie,
+  },
   data() {
     return {
       bmap: null /* 地图 */,
@@ -17,32 +30,71 @@ export default {
       standardPoint: [] /* 标准点位 */,
       infoWindow: null /* 窗口信息 */,
       infoWindowClick: null,
+      dataList2: [
+        {
+          name: '西瓜',
+          value: 20,
+        },
+        {
+          name: '橘子',
+          value: 13,
+        },
+        {
+          name: '杨桃',
+          value: 33,
+        },
+      ],
+      dataList: [
+        {
+          name: '西瓜',
+          value: 20,
+        },
+        {
+          name: '橘子',
+          value: 13,
+        },
+        {
+          name: '杨桃',
+          value: 33,
+        },
+      ],
+      extraOption: {
+        color: ['#000', '#2d90d1', '#f75981', '#90e2a9'],
+      },
     }
   },
   mounted() {
-    this.mapInit()
+    this.mapInit2()
   },
   methods: {
-    mapInit() {
-      const BMap = window.BMap
-      this.bmap = new BMap.Map('allMap', {
+    mapInit1() {
+      const BMapGL = window.BMapGL
+      this.bmap = new BMapGL.Map('allMap', {
         enableMapClick: false,
       }) // 创建Map实例
-      this.bmap.centerAndZoom(new BMap.Point(120.004909, 30.283515), 10) // 初始化地图,设置中心点坐标和地图级别
+      this.bmap.centerAndZoom(new BMapGL.Point(120.004909, 30.283515), 16) // 初始化地图,设置中心点坐标和地图级别
       this.bmap.enableScrollWheelZoom(true) // 开启鼠标滚轮缩放
       this.bmap.setMapStyleV2({
         styleJson: styleJson,
       })
-      this.getData()
-      this.buildStandardPoint()
-      this.renderPolyline()
-      this.renderPolygon()
-      let zoom = this.bmap.getViewport(this.standardPoint).zoom
-      this.bmap.centerAndZoom(
-        this.standardPoint[this.standardPoint.length - 3],
-        zoom
-      )
-      this.renderLabel()
+    },
+    mapInit2() {
+      const BMapGL = window.BMapGL
+      this.bmap = new BMapGL.Map('allMap', {
+        enableMapClick: false,
+      }) // 创建Map实例
+      this.bmap.centerAndZoom(new BMapGL.Point(115.604, 39.225), 9) // 初始化地图,设置中心点坐标和地图级别
+      this.bmap.enableScrollWheelZoom(true) // 开启鼠标滚轮缩放
+      this.bmap.setMapStyleV2({
+        styleJson: styleJson,
+      })
+      this.bmap.setTilt(50)
+      this.bmap.enableScrollWheelZoom()
+      this.renderBounds()
+    },
+    // 清空图层
+    clearMap() {
+      this.bmap.clearOverlays()
     },
     getData() {
       this.reqData = [
@@ -138,121 +190,66 @@ export default {
         },
       ]
     },
+    getCityBoundary(cityName, topFillColor, sideFillColor) {
+      const that = this
+      var bd = new BMapGL.Boundary()
+      bd.get(cityName, function (rs) {
+        var count = rs.boundaries.length //行政区域的点有多少个
+        for (var i = 0; i < count; i++) {
+          var path = []
+          let str = rs.boundaries[i].replace(' ', '')
+          let points = str.split(';')
+          for (var j = 0; j < points.length; j++) {
+            var lng = points[j].split(',')[0]
+            var lat = points[j].split(',')[1]
+            path.push(new BMapGL.Point(lng, lat))
+          }
+          var prism = new BMapGL.Prism(path, 10000, {
+            topFillColor: topFillColor,
+            topFillOpacity: 1,
+            sideFillColor: sideFillColor,
+            sideFillOpacity: 0.8,
+          })
+          that.bmap.addOverlay(prism)
+        }
+      })
+    },
+    search() {
+      this.clearMap()
+      this.getData()
+      this.buildStandardPoint()
+      this.renderPolyline()
+      this.renderPolygon()
+      this.renderLabel()
+      this.dataList2 = [
+        {
+          name: '变化数据1',
+          value: 10,
+        },
+        {
+          name: '变化数据2',
+          value: 70,
+        },
+        {
+          name: '变化数据3',
+          value: 23,
+        },
+      ]
+    },
+    // 方法实例
+    test() {
+      this.mapInit2()
+    },
     // 构造标准点位
     buildStandardPoint() {
       this.standardPoint = this.reqData.map((v) => {
-        return new BMap.Point(v.longitude, v.latitude)
+        return new BMapGL.Point(v.longitude, v.latitude)
       })
-    },
-    // 渲染聚合物
-    renderPolymer() {
-      var randomCount = 500
-      var data = []
-      var citys = [
-        '北京',
-        '天津',
-        '上海',
-        '重庆',
-        '石家庄',
-        '太原',
-        '呼和浩特',
-        '哈尔滨',
-        '长春',
-        '沈阳',
-        '济南',
-        '南京',
-        '合肥',
-        '杭州',
-        '南昌',
-        '福州',
-        '郑州',
-        '武汉',
-        '长沙',
-        '广州',
-        '南宁',
-        '西安',
-        '银川',
-        '兰州',
-        '西宁',
-        '乌鲁木齐',
-        '成都',
-        '贵阳',
-        '昆明',
-        '拉萨',
-        '海口',
-      ]
-      // 构造数据
-      while (randomCount--) {
-        var cityCenter = mapv.utilCityCenter.getCenterByCityName(
-          citys[parseInt(Math.random() * citys.length)]
-        )
-        data.push({
-          geometry: {
-            type: 'Point',
-            coordinates: [
-              cityCenter.lng - 5 + Math.random() * 10,
-              cityCenter.lat - 5 + Math.random() * 10,
-            ],
-          },
-          // 具体点的icon设置
-          iconOptions: {
-            url: ['images/flag.png', 'images/marker.png', 'images/star.png'][
-              randomCount % 3
-            ], // 非聚合时点的icon,可设置为空
-            width: 50 / 3,
-            height: randomCount % 3 === 2 ? 50 / 3 : 77 / 3,
-          },
-        })
-      }
-
-      var dataSet = new mapv.DataSet(data)
-      var options = {
-        // shadowColor: 'rgba(255, 250, 50, 1)',
-        // shadowBlur: 10,
-        // 非聚合点的颜色和大小，未设置icon或icon获取失败时使用
-        fillStyle: 'rgba(255, 50, 0, 1.0)',
-        size: 50 / 3 / 2, // 非聚合点的半径
-        // 非聚合时点的icon设置，会被具体点的设置覆盖，可设置为空
-        // iconOptions: {
-        //     url: 'images/marker.png',
-        //     width: 50 / 3,
-        //     height: 77 / 3,
-        //     offset: {
-        //         x: 0,
-        //         y: 0
-        //     }
-        // },
-        minSize: 8, // 聚合点最小半径
-        maxSize: 31, // 聚合点最大半径
-        globalAlpha: 0.8, // 透明度
-        clusterRadius: 150, // 聚合像素半径
-        maxClusterZoom: 18, // 最大聚合的级别
-        maxZoom: 19, // 最大显示级别
-        minPoints: 5, // 最少聚合点数，点数多于此值才会被聚合
-        extent: 400, // 聚合的细腻程度，越高聚合后点越密集
-        label: {
-          // 聚合文本样式
-          show: true, // 是否显示
-          fillStyle: 'white',
-          // shadowColor: 'yellow',
-          // font: '20px Arial',
-          // shadowBlur: 10,
-        },
-        gradient: { 0: 'blue', 0.5: 'yellow', 1.0: 'rgb(255,0,0)' }, // 聚合图标渐变色
-        draw: 'cluster',
-        methods: {
-          click(point) {
-            if (point) {
-              if (point.iconOptions) {
-                console.log(point.iconOptions.url)
-              }
-              // 通过children可以拿到被聚合的所有点
-              console.log(point.children)
-            }
-          },
-        },
-      }
-      new mapv.baiduMapLayer(this.bmap, dataSet, options)
+      let zoom = this.bmap.getViewport(this.standardPoint).zoom
+      this.bmap.centerAndZoom(
+        this.standardPoint[this.standardPoint.length - 3],
+        zoom
+      )
     },
     // 渲染标注
     renderLabel() {
@@ -261,9 +258,9 @@ export default {
         let content = `
         <div class='${icon}'}></div>
       `
-        let tranckLabel = new BMap.Label(content, {
-          position: new BMap.Point(v.longitude, v.latitude),
-          offset: new BMap.Size(-10, -10),
+        let tranckLabel = new BMapGL.Label(content, {
+          position: new BMapGL.Point(v.longitude, v.latitude),
+          offset: new BMapGL.Size(-10, -10),
         })
         this.bmap.addOverlay(tranckLabel)
         tranckLabel.addEventListener('click', () => {
@@ -273,7 +270,7 @@ export default {
     },
     // 渲染线
     renderPolyline() {
-      const tranckLine = new BMap.Polyline(this.standardPoint, {
+      const tranckLine = new BMapGL.Polyline(this.standardPoint, {
         strokeColor: '#fb368e',
         strokeWeight: 2,
         strokeStyle: 'solid',
@@ -282,7 +279,7 @@ export default {
     },
     // 渲染覆盖物
     renderPolygon() {
-      const tranckPolygon = new BMap.Polygon(this.standardPoint, {
+      const tranckPolygon = new BMapGL.Polygon(this.standardPoint, {
         strokeColor: 'red',
         strokeWeight: 2,
         fillColor: '#fb368e',
@@ -308,8 +305,8 @@ export default {
         this.infoWindow = null
       }
       if (!this.infoWindow) {
-        this.infoWindow = new BMap.Label(content, {
-          position: new BMap.Point(item.longitude, item.latitude),
+        this.infoWindow = new BMapGL.Label(content, {
+          position: new BMapGL.Point(item.longitude, item.latitude),
         })
         this.infoWindowClick = index
         this.bmap.addOverlay(this.infoWindow)
@@ -318,18 +315,55 @@ export default {
         this.infoWindow = null
       }
     },
+    // 渲染区域地图
+    renderBounds() {
+      this.getCityBoundary('北京市', '#5679ea', '#5679ea')
+      this.getCityBoundary('廊坊市', '#CC6666', '#CC6666')
+      this.getCityBoundary('保定市', '#3B9F88', '#3B9F88')
+    },
   },
 }
 </script>
 
 <style lang="scss" scoped>
 .dataView {
+  width: 100%;
+  height: 100%;
   &_container {
     margin: 10px;
   }
+  &_tools {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    margin: 10px;
+    z-index: 1;
+  }
   &_map {
-    width: 100%;
-    height: calc(100vh - 70px);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 0;
+    margin: 10px;
+  }
+  &_echart_pie {
+    position: absolute;
+    top: 15%;
+    left: 10px;
+    width: 25vw;
+    border: 1px solid #051a4b;
+    height: 30vh;
+    background: rgba($color: #051a4b, $alpha: 0.5);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  &_echart_pie2 {
+    top: 60%;
+    left: 10px;
   }
 }
 </style>

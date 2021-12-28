@@ -8,7 +8,6 @@ import api from './api/request'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import '@/icons'
-// import { conf } from './utils/config'
 import '@/permission'
 
 // 全局过滤器

@@ -1,6 +1,6 @@
 <template>
-  <div class="test">
-    <div>测试</div>
+  <div class="home">
+    <div>首页</div>
   </div>
 </template>
 

@@ -1,34 +1,40 @@
 <template>
   <div class="login">
-    <div class="login-test">测试</div>
-    <svg-icon icon-class="dashboard" />
+    <div class="login--bg">
+      <div class="login--commit">
+        <van-button @click="handleLogin" type="primary" size="small">登录</van-button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import storage from '@/utils/storage'
 export default {
   name: 'Login',
   props: {},
   components: {},
   data () {
-    return {}
+    return {
+      loading: false,
+      loginForm: {
+        phoneNum: '13412341234',
+        userName: ''
+      }
+    }
   },
   created () {},
   mounted () {},
   methods: {
-    loginAdmin () {
-      this.$http
-        .getAuthCode({
-          account: 'shequguanfang',
-          password: 'OOoo0000'
+    handleLogin () {
+      this.loading = true
+      this.$store
+        .dispatch('login', this.loginForm)
+        .then(() => {
+          this.$router.push({ path: this.redirect || '/' })
+          this.loading = false
         })
-        .then((res) => {
-          storage.set('case-comunity')
-          console.log(res)
-        })
-        .catch((err) => {
-          console.log(err)
+        .catch(() => {
+          this.loading = false
         })
     }
   }
@@ -36,12 +42,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.login{
-  margin: 0;
-  padding: 0;
-  &-test{
-    color: red;
-    font-size: 16px;
+.login {
+  &--bg {
+    width: 100%;
+    height: 100vh;
+    background: #fff;
   }
 }
 </style>

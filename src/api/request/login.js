@@ -2,7 +2,7 @@ import $http from '../http'
 
 export function login (data) {
   return $http({
-    url: '/vue-admin-template/user/login',
+    url: '/user/login',
     method: 'post',
     data
   })
@@ -10,7 +10,7 @@ export function login (data) {
 
 export function getInfo (token) {
   return $http({
-    url: '/vue-admin-template/user/info',
+    url: '/user/info',
     method: 'get',
     params: { token }
   })
@@ -18,7 +18,7 @@ export function getInfo (token) {
 
 export function logout () {
   return $http({
-    url: '/vue-admin-template/user/logout',
+    url: '/user/logout',
     method: 'post'
   })
 }

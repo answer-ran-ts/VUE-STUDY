@@ -9,11 +9,10 @@ export function parseTime (time, cFormat) {
   } else {
     if (typeof time === 'string') {
       if (/^[0-9]+$/.test(time)) {
-        // support "1548221490638"
+        // 支持 "1548221490638"
         time = parseInt(time)
       } else {
-        // support safari
-        // https://stackoverflow.com/questions/4310953/invalid-date-in-safari
+        // 支持 safari
         time = time.replace(new RegExp(/-/gm), '/')
       }
     }
@@ -34,24 +33,10 @@ export function parseTime (time, cFormat) {
   }
   const timeStr = format.replace(/{([ymdhisa])+}/g, (result, key) => {
     const value = formatObj[key]
-    // Note: getDay() returns 0 on Sunday
     if (key === 'a') {
       return ['日', '一', '二', '三', '四', '五', '六'][value]
     }
     return value.toString().padStart(2, '0')
   })
   return timeStr
-}
-
-export function getListVal (arr, key) {
-  if (toString.call(arr) === '[object Array]') {
-    let obj = arr.filter((item) => item.itemKey === key)
-    if (obj.length > 0) {
-      obj = obj[0]
-      if ((!!obj.itemValue || obj.itemValue === 0) && obj.itemValue !== 'null') {
-        return obj.itemValue
-      }
-    }
-  }
-  return ''
 }

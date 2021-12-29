@@ -28,11 +28,10 @@ http.interceptors.request.use(
 http.interceptors.response.use(
   (response) => {
     const { status } = response.data
-
     if (status === 2) {
-      localStorage.removeItem('zjwl')
+      // 做点什么
+      localStorage.removeItem('fried-shop')
     }
-
     return response.data
   },
   (error) => {
